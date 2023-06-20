@@ -1,23 +1,23 @@
-import logo from './logo.svg';
+import FileUpload from './components/FileUpload';
 import './App.css';
+import DataClustering from './components/DataClustering';
+import FileDownload from './components/FileDownlad';
+import ImageQuestion from './components/ImageQuestion';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>File Upload</h1>
+      <FileUpload />
+
+      <h1>Data Clustering</h1>
+      <DataClustering />
+
+      <h1>Manual Data Annotation</h1>
+      <ImageQuestion />
+
+      <h1>Download Files</h1>
+      <FileDownload />
     </div>
   );
 }
