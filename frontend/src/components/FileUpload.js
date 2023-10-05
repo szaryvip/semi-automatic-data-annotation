@@ -5,16 +5,6 @@ import Dropzone from 'react-dropzone';
 const FileUpload = () => {
     const [files, setFiles] = useState([]);
     const [errorMessage, setErrorMessage] = useState('');
-    const [csrfTokenValue, setCsrfTokenValue] = useState('');
-
-    useEffect(() => {
-        const fetchCsrfToken = async () => {
-            const response = await axios.get('/csrf_cookie/');
-            setCsrfTokenValue(response.data.csrfToken);
-        };
-
-        fetchCsrfToken();
-    }, []);
 
     const handleDrop = (acceptedFiles) => {
         setFiles(acceptedFiles);
@@ -45,13 +35,21 @@ const FileUpload = () => {
         }
 
         const headers = {
-            'X-CSRFToken': csrfTokenValue,
             'Content-Type': 'multipart/form-data',
         };
 
         try {
-            const response = await axios.post('/upload/', formData, { headers });
+            const response = await axios.post('/upload', formData, { headers });
             console.log(response);
+        } catch (error) {
+            console.error(error);
+            setErrorMessage('Error uploading files');
+        }
+    };
+
+    const removePrevious = async () => {
+        try {
+            const response = await axios.delete('/delete-files');
         } catch (error) {
             console.error(error);
         }
@@ -68,6 +66,7 @@ const FileUpload = () => {
                 )}
             </Dropzone>
             {errorMessage && <p>{errorMessage}</p>}
+            <button onClick={removePrevious}>Remove Previous</button>
             <button onClick={handleUpload}>Upload</button>
         </div>
     );

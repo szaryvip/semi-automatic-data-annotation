@@ -1,7 +1,7 @@
 import FileUpload from './components/FileUpload';
 import './App.css';
-import DataClustering from './components/DataClustering';
 import FileDownload from './components/FileDownlad';
+import VAEPrepare from './components/VAEPrepare';
 import ImageQuestion from './components/ImageQuestion';
 
 function App() {
@@ -10,8 +10,8 @@ function App() {
       <h1>File Upload</h1>
       <FileUpload />
 
-      <h1>Data Clustering</h1>
-      <DataClustering />
+      <h1>VAE Preparation</h1>
+      <VAEPrepare />
 
       <h1>Manual Data Annotation</h1>
       <ImageQuestion />

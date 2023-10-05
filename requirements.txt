@@ -1,3 +1,5 @@
-django
-djangorestframework
-django-cors-headers
+fastapi==0.100.0
+uvicorn==0.23.0
+torch==1.12.1
+torchvision==0.13.1
+python-multipart==0.0.6
