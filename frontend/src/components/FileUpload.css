@@ -1,0 +1,37 @@
+.data-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.prompt {
+    font-style: italic;
+    color: #3a3939;
+}
+
+.error-message {
+    color: #860000;
+}
+
+.dropbox-div {
+    border: 2px dashed;
+    padding-top: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-bottom: 10px;
+    width: 60%;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.upload-div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.upload-image {
+    width: 40px;
+}

@@ -7,17 +7,19 @@ import ImageQuestion from './components/ImageQuestion';
 function App() {
   return (
     <div className="App">
-      <h1>File Upload</h1>
-      <FileUpload />
+      <div className='card'>
+        <h1>File Upload</h1>
+        <FileUpload />
 
-      <h1>VAE Preparation</h1>
-      <VAEPrepare />
+        <h1>VAE Preparation</h1>
+        <VAEPrepare />
 
-      <h1>Manual Data Annotation</h1>
-      <ImageQuestion />
+        <h1>Manual Data Annotation</h1>
+        <ImageQuestion />
 
-      <h1>Download Files</h1>
-      <FileDownload />
+        <h1>Download Files</h1>
+        <FileDownload />
+      </div>
     </div>
   );
 }

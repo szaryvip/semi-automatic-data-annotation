@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Dropzone from 'react-dropzone';
+import uploadIcon from '../assets/upload.png'
+import './FileUpload.css'
 
 const FileUpload = () => {
     const [files, setFiles] = useState([]);
@@ -56,18 +58,21 @@ const FileUpload = () => {
     };
 
     return (
-        <div>
+        <div className='upload-div'>
             <Dropzone onDrop={handleDrop} multiple>
                 {({ getRootProps, getInputProps }) => (
-                    <div {...getRootProps()}>
+                    <div className='dropbox-div' {...getRootProps()}>
                         <input {...getInputProps()} />
-                        <p>Drag and drop files here or click to select files</p>
+                        <img src={uploadIcon} className='upload-image' />
+                        <p className='prompt'>Drag and drop files here or click to select files</p>
                     </div>
                 )}
             </Dropzone>
-            {errorMessage && <p>{errorMessage}</p>}
-            <button onClick={removePrevious}>Remove Previous</button>
-            <button onClick={handleUpload}>Upload</button>
+            {errorMessage && <p className='error-message'>{errorMessage}</p>}
+            <div className='data-buttons'>
+                <button onClick={removePrevious}>Remove Previous</button>
+                <button onClick={handleUpload}>Upload</button>
+            </div>
         </div>
     );
 };

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { ThreeDots } from 'react-loader-spinner';
+import './VAEPrepare.css'
 
 const VAEPrepare = () => {
     const [message, setMessage] = useState('');
@@ -23,7 +24,7 @@ const VAEPrepare = () => {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <button onClick={prepareVAE}>Prepare VAE model</button>
             {loading ? (
-                <ThreeDots color="#00BFFF" height={50} width={50} />
+                <ThreeDots color="#5300b3" height={50} width={50} />
             ) : (
                 message && <p>{message}</p>
             )}

@@ -1,3 +1,40 @@
 .App {
   text-align: center;
+  background-color: red;
+  display: flex;
+  height: 100dvh;
+  background-image: linear-gradient(to bottom right, rgb(82, 3, 119), rgb(5, 35, 201));
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  background-color: rgba(255, 255, 255, 0.6);
+  width: 50%;
+  border-radius: 20px;
+  padding-top: 35px;
+  padding-bottom: 35px;
+  padding-left: 15px;
+  padding-right: 15px;
+  box-shadow: 8px 8px 24px 0px rgba(66, 68, 90, 1);
+}
+
+button {
+  background-image: linear-gradient(to bottom right, rgb(82, 3, 119), rgb(5, 35, 201));
+  color: #F7F7F7;
+  padding: 4px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 7px;
+  border: None;
+  transition: opacity 0.3s;
+}
+
+button:hover {
+  opacity: 0.7;
+}
+
+h1 {
+  font-weight: 600;
 }

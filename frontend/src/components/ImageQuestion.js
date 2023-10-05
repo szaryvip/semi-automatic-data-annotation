@@ -63,23 +63,23 @@ const ImageQuestion = () => {
         <div>
             <div>
                 <img src={imageUrls[currentIndex]} alt={`Image ${currentIndex + 1}`} className="image-content" />
-                <p></p>
-                <input
-                    type="text"
-                    value={answers[currentIndex] || ''}
-                    onChange={(e) => {
-                        const newAnswers = [...answers];
-                        newAnswers[currentIndex] = e.target.value
-                        setAnswers(newAnswers)
-                    }}
-                />
-                <button onClick={prevImage}>Prev</button>
-                <button onClick={nextImage}>Next</button>
+                <br />
+                <div className='input-div'>
+                    <input className='input-input'
+                        type="text"
+                        value={answers[currentIndex] || ''}
+                        onChange={(e) => {
+                            const newAnswers = [...answers];
+                            newAnswers[currentIndex] = e.target.value
+                            setAnswers(newAnswers)
+                        }}
+                    />
+                    <button onClick={prevImage}>Prev</button>
+                    <button onClick={nextImage}>Next</button>
+                </div>
             </div>
-            <p></p>
             <button onClick={submitAnswers}>Submit</button>
             {responses && <p>{responses}</p>}
-            <p></p>
             <button onClick={fetchImages}>New Images</button>
         </div>
     );
