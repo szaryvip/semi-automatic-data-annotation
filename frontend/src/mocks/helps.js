@@ -1,0 +1,4 @@
+export const help_upload = "Firstly, you have to upload images. Selected files cannot be in subfolders. You can select files multiple times. Allowed extensions: .jpg, .jpeg, .png. To remove previously uploaded images click 'Remove Previous'."
+export const help_vae = "On this stage, VAE has to be prepared. If you have uploaded all images, you can click button. Be patient, it could take a while because of VAE training. Wait until the appropriate message appears."
+export const help_manual = "Now you have to annotate some examples. Please click 'Load Images' and then provide class names below each of images. You can go to the other pictures by clicking 'Prev' and 'Next'. After that, click 'Submit' button. Your all dataset will be annotated."
+export const help_download = "Click 'Download Files' to download your annotated data."

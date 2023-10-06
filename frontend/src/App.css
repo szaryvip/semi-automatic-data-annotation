@@ -2,11 +2,13 @@
   text-align: center;
   background-color: red;
   display: flex;
-  height: 100dvh;
+  min-height: 100dvh;
   background-image: linear-gradient(to bottom right, rgb(82, 3, 119), rgb(5, 35, 201));
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding-top: 50px;
+  padding-bottom: 50px;
 }
 
 .card {
@@ -21,20 +23,43 @@
 }
 
 button {
-  background-image: linear-gradient(to bottom right, rgb(82, 3, 119), rgb(5, 35, 201));
+  /* background-image: linear-gradient(to bottom right, rgb(82, 3, 119), rgb(5, 35, 201)); */
+  background-color: #0046AD;
+  border: 2px solid #520377;
   color: #F7F7F7;
+  font-weight: 600;
   padding: 4px;
   padding-left: 10px;
   padding-right: 10px;
   border-radius: 7px;
-  border: None;
-  transition: opacity 0.3s;
+  box-shadow: 8px 8px 24px -10px rgba(66, 68, 90, 1);
+  transition: background-color 0.3s, box-shadow 0.3s;
+  cursor: pointer;
 }
 
 button:hover {
-  opacity: 0.7;
+  background-color: #520377;
+  box-shadow: 8px 8px 24px -6px rgba(66, 68, 90, 1);
+
 }
 
 h1 {
   font-weight: 600;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #520377;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #40015e;
 }

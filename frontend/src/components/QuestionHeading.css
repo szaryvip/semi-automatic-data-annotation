@@ -1,0 +1,11 @@
+.question-header {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.info {
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+}

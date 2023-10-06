@@ -61,6 +61,7 @@ const ImageQuestion = () => {
 
     return (
         <div>
+            <button className='load-button' onClick={fetchImages}>Load Images</button>
             <div>
                 <img src={imageUrls[currentIndex]} alt={`Image ${currentIndex + 1}`} className="image-content" />
                 <br />
@@ -80,7 +81,6 @@ const ImageQuestion = () => {
             </div>
             <button onClick={submitAnswers}>Submit</button>
             {responses && <p>{responses}</p>}
-            <button onClick={fetchImages}>New Images</button>
         </div>
     );
 };

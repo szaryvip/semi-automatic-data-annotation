@@ -24,7 +24,10 @@ const VAEPrepare = () => {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <button onClick={prepareVAE}>Prepare VAE model</button>
             {loading ? (
-                <ThreeDots color="#5300b3" height={50} width={50} />
+                <div className='waiting-div'>
+                    <p>Sit tight, it could take a while...</p>
+                    <ThreeDots color="#5300b3" height={50} width={50} />
+                </div>
             ) : (
                 message && <p>{message}</p>
             )}

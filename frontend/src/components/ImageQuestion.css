@@ -17,3 +17,7 @@
     border: None;
     padding-left: 5px;
 }
+
+.load-button {
+    margin-bottom: 10px;
+}
