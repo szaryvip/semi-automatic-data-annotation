@@ -1,14 +1,16 @@
-from .models import AnswerPayload
-from fastapi import FastAPI, UploadFile, File, Response
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, StreamingResponse
 import random
 import shutil
 import time
 import zipfile
 import tempfile
 import os
-from deepbackend.modules import prepare_vae
+
+from fastapi import FastAPI, UploadFile, File
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse, StreamingResponse
+
+from .models import AnswerPayload
+from deepbackend.modules import SADATool
 
 
 app = FastAPI()
@@ -27,12 +29,15 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
+sada_tool = None
+
 
 @app.post("/upload")
 def upload_files(files: list[UploadFile] = File(...)):
     for file in files:
         with open(f'media/unlabeled/{file.filename}', 'wb+') as destination:
             destination.write(file.file.read())
+    sada_tool = SADATool() # clearing previous data
     return 'Files uploaded successfully'
 
 
@@ -49,7 +54,7 @@ def delete_files():
 def prepare_vae_model():
     if os.path.isfile("model.pt"):
         os.remove("model.pt")
-    prepare_vae()
+    sada_tool.prepare_vae()
     time.sleep(3)
     return "VAE model prepared!"
 
@@ -77,19 +82,20 @@ def download_data():
 
 @app.get("/get_images")
 def get_images():
+    sada_tool.select_to_manual_annotation()
+    
     zip_filename = 'files.zip'
 
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_zip_file = os.path.join(temp_dir, zip_filename)
 
         with zipfile.ZipFile(temp_zip_file, 'w') as zip_file:
-            for root, directories, files in os.walk('media/'):
-                for file in files:
-                    if random.random() < 0.5:
-                        continue
-                    file_path = os.path.join(root, file)
-                    arcname = os.path.relpath(file_path, 'media/')
-                    zip_file.write(file_path, arcname=arcname)
+            for root, _, files in os.walk('media/'):
+                for idx, file in enumerate(files):
+                    if idx in sada_tool.selected_idx:
+                        file_path = os.path.join(root, file)
+                        arcname = os.path.relpath(file_path, 'media/')
+                        zip_file.write(file_path, arcname=arcname)
 
         return StreamingResponse(
             open(temp_zip_file, 'rb'),
@@ -100,5 +106,5 @@ def get_images():
 
 @app.post("/submit_answers")
 def submit_answers(answers: AnswerPayload):
-    response_messages = ['Your answer was: ' + answer for answer in answers.answers]
-    return JSONResponse({'responses': response_messages})
+    sada_tool.annotate_data(answers.answers)
+    return JSONResponse({'responses': 'Answers received, data annotated!'})
