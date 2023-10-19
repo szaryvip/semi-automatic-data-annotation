@@ -17,7 +17,7 @@ from torchvision import datasets
 from torchvision import transforms
 from torch.utils.data import DataLoader
 
-from vae import VariationalAutoencoder
+from .vae import VariationalAutoencoder
 
 
 def np_image_to_base64(im_matrix) -> str:
@@ -90,52 +90,56 @@ class SADATool:
     def __init__(self):
         self.device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
         self.selected_idx = []
+        self.map_from_names = {}
 
         transform = transforms.Compose([
             transforms.ToTensor(),
         ])
-        self.all_data = datasets.ImageFolder("../media/")
+        self.all_data = datasets.ImageFolder("media/")
         self.all_data.transform = transform
+        self.data_loader = DataLoader(self.all_data)
 
     def _annotate_files(self, predictions):
-        already_created_classes = os.listdir("../annotated_data/")
-        files = os.listdir("../media/unlabeled/")
+        key_list = list(self.map_from_names.keys())
+        val_list = list(self.map_from_names.values())
+        already_created_classes = os.listdir("annotated_data/")
+        files = os.listdir("media/unlabeled/")
         for file, pred_class in zip(files, predictions):
-            if pred_class not in already_created_classes:
-                os.mkdir(f"../annotated_data/{pred_class}")
-                shutil.move(f"../media/unlabeled/{file}", f"../annotated_data/{pred_class}/{file}")
-                already_created_classes.append(pred_class)
+            pred_class_name = key_list[val_list.index(pred_class)]
+            if pred_class_name not in already_created_classes:
+                os.mkdir(f"annotated_data/{pred_class_name}")
+                already_created_classes.append(str(pred_class_name))
+            shutil.move(f"media/unlabeled/{file}", f"annotated_data/{pred_class_name}/{file}")
 
     def prepare_vae(self) -> None:
         lr = 1e-3 
-        self.model = VariationalAutoencoder(len(self.all_data[0][0]), 4, self.device)
+        self.model = VariationalAutoencoder(len(self.all_data[0][0]), 32, self.device)
         self.model.to(self.device)
         optim = torch.optim.Adam(self.model.parameters(), lr=lr, weight_decay=1e-5)
-        train_loader = DataLoader(self.all_data)
-        num_epochs = 100
+        num_epochs = 10
         for epoch in range(num_epochs):
-            train_loss = train_epoch(self.model,self.device,train_loader,optim)
+            train_loss = train_epoch(self.model, self.device, self.data_loader, optim)
             print(epoch, " epoch: ",train_loss)
 
     def select_to_manual_annotation(self) -> list:
         self.model.eval()
-        for sample in self.all_data:
-            img = sample[0].unsqueeze(0).to(self.device)
-            label = sample[1]
+        encoded_samples = []
+        for sample, _ in self.data_loader:
+            sample.to(self.device)
             with torch.no_grad():
-                encoded_img  = self.model.encoder(img)
+                encoded_img  = self.model.encoder(sample)
             encoded_img = encoded_img.flatten().cpu().numpy()
             encoded_sample = {f"Enc. Var. {i}": enc for i, enc in enumerate(encoded_img)}
             encoded_samples.append(encoded_sample)
 
         encoded_samples = pd.DataFrame(encoded_samples)
-        encoded_samples = None
         
         tsne = TSNE(n_components=2, perplexity=50, early_exaggeration=30, n_iter=1000)
         self.tsne_results = tsne.fit_transform(encoded_samples)
 
         ms = DBSCAN(eps=3, min_samples=20).fit(self.tsne_results)
         labels = ms.labels_
+        print(len(np.unique(labels)))
 
         label_indices = defaultdict(list)
         for idx, label in enumerate(labels):
@@ -152,7 +156,10 @@ class SADATool:
         labels = []
         for idx, _ in enumerate(self.all_data):
             if idx in self.selected_idx:
-                labels.append(answers[0])
+                if answers[0] not in self.map_from_names.keys():
+                    value = len(self.map_from_names.keys())
+                    self.map_from_names[answers[0]] = value
+                labels.append(self.map_from_names[answers[0]])
                 answers.remove(answers[0])
             else:
                 labels.append(-1)

@@ -34,10 +34,11 @@ sada_tool = None
 
 @app.post("/upload")
 def upload_files(files: list[UploadFile] = File(...)):
+    global sada_tool
     for file in files:
         with open(f'media/unlabeled/{file.filename}', 'wb+') as destination:
             destination.write(file.file.read())
-    sada_tool = SADATool() # clearing previous data
+    sada_tool = SADATool()
     return 'Files uploaded successfully'
 
 
@@ -45,17 +46,20 @@ def upload_files(files: list[UploadFile] = File(...)):
 def delete_files():
     if os.path.exists("media"):
         shutil.rmtree("media")
+    if os.path.exists("annotated_data"):
+        shutil.rmtree("annotated_data")
     os.mkdir("media")
+    os.mkdir("annotated_data")
     os.mkdir("media/unlabeled")
     return 'Files deleted successfully'
 
 
 @app.get("/prepare_vae")
 def prepare_vae_model():
-    if os.path.isfile("model.pt"):
-        os.remove("model.pt")
+    global sada_tool
+    if sada_tool is None:
+        return "Firstly upload data!"
     sada_tool.prepare_vae()
-    time.sleep(3)
     return "VAE model prepared!"
 
 
@@ -82,6 +86,9 @@ def download_data():
 
 @app.get("/get_images")
 def get_images():
+    global sada_tool
+    if sada_tool is None:
+        return
     sada_tool.select_to_manual_annotation()
     
     zip_filename = 'files.zip'
@@ -106,5 +113,8 @@ def get_images():
 
 @app.post("/submit_answers")
 def submit_answers(answers: AnswerPayload):
-    sada_tool.annotate_data(answers.answers)
-    return JSONResponse({'responses': 'Answers received, data annotated!'})
+    global sada_tool
+    if sada_tool is not None:
+        sada_tool.annotate_data(answers.answers)
+        return JSONResponse({'responses': 'Answers received, data annotated!'})
+    return JSONResponse({'responses': 'VAE is not prepared!'})
