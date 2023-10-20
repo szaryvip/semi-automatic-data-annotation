@@ -1,6 +1,4 @@
-import random
 import shutil
-import time
 import zipfile
 import tempfile
 import os
@@ -10,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 
 from .models import AnswerPayload
-from deepbackend.modules import SADATool
+from deepbackend.sada_tool import SADATool
 
 
 app = FastAPI()
