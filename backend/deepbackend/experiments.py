@@ -5,7 +5,6 @@ import random
 import pandas as pd
 
 from typing import Literal
-from torch.utils.data import random_split
 from sklearn.metrics import accuracy_score, f1_score, recall_score, precision_score
 from tqdm import tqdm
 from collections import defaultdict
@@ -50,23 +49,29 @@ def _calculate_metrics(labels_for_param: dict, true_labels: list, show_plot: boo
     best_prec = max(precision_scores, key=lambda x: x[0])
     best_index = accuracies.index(best_acc)
     print(f"Best results in {experiment} experiment are with parameter = {list(labels_for_param.keys())[best_index]}:")
-    print(f"Accuracy:\nmean: {best_acc[0]}, stddev: {best_acc[1]}, min: {best_acc[2]}, max: {best_acc[3]}")
-    print(f"Precision:\nmean: {best_prec[0]}, stddev: {best_prec[1]}, min: {best_prec[2]}, max: {best_prec[3]}")
-    print(f"F1 score:\nmean: {best_f1[0]}, stddev: {best_f1[1]}, min: {best_f1[2]}, max: {best_f1[3]}")
-    print(f"Recall:\nmean: {best_recall[0]}, stddev: {best_recall[1]}, min: {best_recall[2]}, max: {best_recall[3]}")
+    print(f"Accuracy:\nmean: {best_acc[0]:.3f}, stddev: {best_acc[1]:.3f}, min: {best_acc[2]:.3f}, max: {best_acc[3]:.3f}")
+    print(f"Precision:\nmean: {best_prec[0]:.3f}, stddev: {best_prec[1]:.3f}, min: {best_prec[2]:.3f}, max: {best_prec[3]:.3f}")
+    print(f"F1 score:\nmean: {best_f1[0]:.3f}, stddev: {best_f1[1]:.3f}, min: {best_f1[2]:.3f}, max: {best_f1[3]:.3f}")
+    print(f"Recall:\nmean: {best_recall[0]:.3f}, stddev: {best_recall[1]:.3f}, min: {best_recall[2]:.3f}, max: {best_recall[3]:.3f}")
     if list(labels_for_param.keys()) != [None] and show_plot:
+        experiment_to_parameter_name = {
+            "quantity": "Labeled data (%)",
+            "reduction": "Encoded data dimension"
+        }
         x = np.arange(len(labels_for_param.keys()))
-        width = 0.15
+        width = 0.25
         
+        xtick_positions = []
         for i, param in enumerate(labels_for_param.keys()):
-            plt.bar(x[i] + i*width, accuracies[i][0], width, label=param)
-            plt.errorbar(x[i] + i*width, accuracies[i][0], yerr=[[np.array(accuracies[i][0])-np.array(accuracies[i][2])], [np.array(accuracies[i][3])-np.array(accuracies[i][0])]], fmt='none', color='k', capsize=5)
+            xtick_positions.append(x[i] + i*width/2)
+            plt.bar(x[i] + i*width/2, accuracies[i][0], width, label=param)
+            plt.errorbar(x[i] + i*width/2, accuracies[i][0], yerr=[[np.array(accuracies[i][0])-np.array(accuracies[i][2])], [np.array(accuracies[i][3])-np.array(accuracies[i][0])]], fmt='none', color='k', capsize=5)
 
-        plt.xlabel('Parameter', fontsize=24)
-        plt.ylabel('Accuracy', fontsize=24)
-        plt.xticks(x + width*1.5, labels_for_param.keys(), fontsize=22)
-        plt.yticks([0,20,40,80,90,95], fontsize=22)
-        plt.legend(fontsize=18, loc='upper left')
+        plt.xlabel(experiment_to_parameter_name[experiment], fontsize=18)
+        plt.ylabel('Accuracy (%)', fontsize=18)
+        plt.xticks(xtick_positions, labels_for_param.keys(), fontsize=14)
+        plt.yticks([0,40,80,90,95], fontsize=14)
+        plt.legend(fontsize=12, loc='upper left')
         plt.grid(True, linestyle='--', alpha=0.6)
         # Show percentages on Y-axis
         plt.gca().set_yticklabels(['{:.0f}%'.format(y) for y in plt.gca().get_yticks()])
@@ -207,7 +212,6 @@ def splitting_experiment(dataset: datasets.VisionDataset, show_plot: bool, itera
 
     annotated_percent = 0.05
     labeled_quantity = int(annotated_percent * len(dataset))
-    print("Len of labeled: ", labeled_quantity, " Len of unlabeled: ", len(dataset)- labeled_quantity)
 
     encoded_samples, true_labels = _process_through_vae(dataset)
     encoded_samples = pd.DataFrame(encoded_samples)

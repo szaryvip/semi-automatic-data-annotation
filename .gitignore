@@ -1,6 +1,4 @@
 __pycache__/
 tmp/
 media/
-MNIST/
-CIFAR10/
-CIFAR100/
+datasets/
