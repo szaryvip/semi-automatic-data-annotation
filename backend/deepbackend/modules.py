@@ -4,9 +4,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import base64
 
+import torch.nn as nn
 from torch.nn import functional as F
 from PIL import Image
 
+MSE_LOSS = nn.MSELoss(reduction="sum")
 
 def np_image_to_base64(im_matrix) -> str:
     im_matrix = im_matrix * 255
@@ -19,14 +21,13 @@ def np_image_to_base64(im_matrix) -> str:
     return im_url
 
 
-def train_epoch(vae, device, dataloader, optimizer) -> float:
+def train_epoch(vae, device, dataloader, optimizer) -> float:    
     vae.train()
     train_loss = 0.0
     for x, _ in dataloader: 
         x = x.to(device)
         x_hat = vae(x)
-        loss = ((x_hat-x)**2).sum() + vae.encoder.kl
-        # loss = F.mse_loss(x_hat, x) + vae.encoder.kl
+        loss = MSE_LOSS(x_hat, x) + vae.encoder.kl
 
         optimizer.zero_grad()
         loss.backward()
@@ -45,8 +46,7 @@ def test_epoch(vae, device, dataloader) -> float:
             x = x.to(device)
             _ = vae.encoder(x)
             x_hat = vae(x)
-            loss = ((x_hat-x)**2).sum() + vae.encoder.kl
-            # loss = F.mse_loss(x_hat, x) + vae.encoder.kl
+            loss = MSE_LOSS(x_hat, x) + vae.encoder.kl
             val_loss += loss.item()
 
     return val_loss / len(dataloader.dataset)

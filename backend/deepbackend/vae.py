@@ -36,7 +36,7 @@ class VariationalEncoder(nn.Module):
         mu =  self.fc_mu(x)
         sigma = torch.exp(self.fc_sig(x))
         z = mu + sigma*self.N.sample(mu.shape)
-        self.kl = (sigma**2 + mu**2 - torch.log(sigma) - 1/2).sum()
+        self.kl=0.5 * torch.sum(-1 - sigma + torch.exp(sigma) + mu**2)
         return z    
 
 class Decoder(nn.Module):
