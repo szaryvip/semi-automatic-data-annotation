@@ -6,13 +6,18 @@ import torch.nn.functional as F
 class VariationalEncoder(nn.Module):
     def __init__(self, in_channels, latent_dims, device):  
         super(VariationalEncoder, self).__init__()
-        self.conv1 = nn.Conv2d(in_channels, 8*in_channels, 3, stride=2, padding=1)
-        self.conv2 = nn.Conv2d(8*in_channels, 16*in_channels, 3, stride=2, padding=1)
-        self.batch2 = nn.BatchNorm2d(16*in_channels)
-        self.conv3 = nn.Conv2d(16*in_channels, 32*in_channels, 3, stride=2, padding=0)  
+        self.encoder_conv = nn.Sequential(
+            nn.Conv2d(in_channels, 8*in_channels, 3, stride=2, padding=1),
+            nn.BatchNorm2d(8*in_channels),
+            nn.ReLU(True),
+            nn.Conv2d(8*in_channels, 16*in_channels, 3, stride=2, padding=1),
+            nn.BatchNorm2d(16*in_channels,),
+            nn.ReLU(True),
+            nn.Conv2d(16*in_channels, 32*in_channels, 3, stride=2, padding=0)
+        )
         self.linear1 = nn.Linear(32*32*32*in_channels, 128)
-        self.linear2 = nn.Linear(128, latent_dims)
-        self.linear3 = nn.Linear(128, latent_dims)
+        self.fc_mu = nn.Linear(128, latent_dims)
+        self.fc_sig = nn.Linear(128, latent_dims)
 
         self.N = torch.distributions.Normal(0, 1)
         self.N.loc = self.N.loc.cuda()
@@ -23,15 +28,13 @@ class VariationalEncoder(nn.Module):
 
     def forward(self, x):
         x = x.to(self.device)
-        x = F.relu(self.conv1(x))
-        x = F.relu(self.batch2(self.conv2(x)))
-        x = F.relu(self.conv3(x))
+        x = self.encoder_conv(x)
         self.conv_shape = x.shape[2:]
         x = F.adaptive_avg_pool2d(x, 32)
         x = torch.flatten(x, start_dim=1)
         x = F.relu(self.linear1(x))
-        mu =  self.linear2(x)
-        sigma = torch.exp(self.linear3(x))
+        mu =  self.fc_mu(x)
+        sigma = torch.exp(self.fc_sig(x))
         z = mu + sigma*self.N.sample(mu.shape)
         self.kl = (sigma**2 + mu**2 - torch.log(sigma) - 1/2).sum()
         return z    

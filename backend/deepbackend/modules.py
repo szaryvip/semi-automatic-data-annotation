@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import base64
 
+from torch.nn import functional as F
 from PIL import Image
 
 
@@ -25,6 +26,7 @@ def train_epoch(vae, device, dataloader, optimizer) -> float:
         x = x.to(device)
         x_hat = vae(x)
         loss = ((x_hat-x)**2).sum() + vae.encoder.kl
+        # loss = F.mse_loss(x_hat, x) + vae.encoder.kl
 
         optimizer.zero_grad()
         loss.backward()
@@ -41,10 +43,10 @@ def test_epoch(vae, device, dataloader) -> float:
     with torch.no_grad():
         for x, _ in dataloader:
             x = x.to(device)
-            encoded_data = vae.encoder(x)
+            _ = vae.encoder(x)
             x_hat = vae(x)
-
             loss = ((x_hat-x)**2).sum() + vae.encoder.kl
+            # loss = F.mse_loss(x_hat, x) + vae.encoder.kl
             val_loss += loss.item()
 
     return val_loss / len(dataloader.dataset)

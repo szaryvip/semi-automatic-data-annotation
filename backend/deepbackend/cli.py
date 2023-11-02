@@ -1,7 +1,9 @@
 import click
+import torch
 import sys
 import torchvision
 
+from torch.utils.data import Subset
 from experiments import reduction_experiment, splitting_experiment, quantity_experiment
 
 
@@ -27,7 +29,7 @@ from experiments import reduction_experiment, splitting_experiment, quantity_exp
     "--experiment",
     required=True,
     type=click.Choice(
-        ["reduction", "spliting", "quantity"]
+        ["reduction", "splitting", "quantity"]
     ),
     help="Experiment type",
 )
@@ -52,11 +54,13 @@ def cli(
     dataset = None
     match data:
         case "MNIST":
-            dataset = torchvision.datasets.MNIST(root="", train=True, download=False, transform=transform)
+            dataset = torchvision.datasets.MNIST(root="", train=True, download=True, transform=transform)
         case "CIFAR10":
-            dataset = torchvision.datasets.CIFAR10(root="", train=True, download=False, transform=transform)
+            dataset = torchvision.datasets.CIFAR10(root="", train=True, download=True, transform=transform)
         case "CIFAR100":
-            dataset = torchvision.datasets.CIFAR100(root="", train=True, download=False, transform=transform)
+            dataset = torchvision.datasets.CIFAR100(root="", train=True, download=True, transform=transform)
+    indices = torch.arange(10000)
+    dataset = Subset(dataset, indices)
     match experiment:
         case "reduction":
             reduction_experiment(dataset, show_plots, iterations)

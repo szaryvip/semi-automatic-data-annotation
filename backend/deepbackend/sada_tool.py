@@ -13,8 +13,8 @@ from torchvision import datasets
 from torchvision import transforms
 from torch.utils.data import DataLoader
 
-from vae import VariationalAutoencoder
-from modules import train_epoch
+from .vae import VariationalAutoencoder
+from .modules import train_epoch
 
 
 class SADATool:
