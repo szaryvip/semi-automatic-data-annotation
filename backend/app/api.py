@@ -52,7 +52,7 @@ def delete_files():
     return 'Files deleted successfully'
 
 
-@app.get("/prepare_vae")
+@app.get("/prepare-vae")
 def prepare_vae_model():
     global sada_tool
     if sada_tool is None:
@@ -61,7 +61,7 @@ def prepare_vae_model():
     return "VAE model prepared!"
 
 
-@app.get("/download_files")
+@app.get("/download-files")
 def download_data():
     zip_filename = 'files.zip'
 
@@ -82,7 +82,7 @@ def download_data():
         )
 
 
-@app.get("/get_images")
+@app.get("/get-images")
 def get_images():
     global sada_tool
     if sada_tool is None:
@@ -109,7 +109,7 @@ def get_images():
         )
 
 
-@app.post("/submit_answers")
+@app.post("/submit-answers")
 def submit_answers(answers: AnswerPayload):
     global sada_tool
     if sada_tool is not None:

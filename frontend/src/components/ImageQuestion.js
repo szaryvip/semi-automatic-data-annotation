@@ -11,7 +11,7 @@ const ImageQuestion = () => {
 
     const fetchImages = async () => {
         try {
-            const response = await axios.get('/get_images', { responseType: 'blob' });
+            const response = await axios.get('/get-images', { responseType: 'blob' });
 
             const zipFile = new Blob([response.data], { type: 'application/zip' });
             const zipUrl = URL.createObjectURL(zipFile);
@@ -38,7 +38,7 @@ const ImageQuestion = () => {
 
     const submitAnswers = async () => {
         try {
-            const response = await axios.post('/submit_answers', { answers });
+            const response = await axios.post('/submit-answers', { answers });
             setResponses(response.data.responses);
         } catch (error) {
             console.error(error);

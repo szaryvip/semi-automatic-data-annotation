@@ -10,7 +10,7 @@ const VAEPrepare = () => {
     const prepareVAE = async () => {
         try {
             setLoading(true);
-            const response = await axios.get('/prepare_vae');
+            const response = await axios.get('/prepare-vae');
             setMessage(response.data);
         } catch (error) {
             setLoading(false);

@@ -5,20 +5,11 @@ import torchvision
 import warnings
 
 from torch.utils.data import Subset
-from experiments import reduction_experiment, splitting_experiment, quantity_experiment
+from experiments import reduction_experiment, splitting_experiment, quantity_experiment, _calculate_metrics
 
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 @click.command()
-@click.option(
-    "-d",
-    "--data",
-    required=True,
-    type=click.Choice(
-        ["MNIST", "CIFAR10", "CIFAR100"]
-    ),
-    help="Dataset for experiments",
-)
 @click.option(
     "-p",
     "--show-plots",
@@ -43,7 +34,6 @@ warnings.filterwarnings("ignore", category=RuntimeWarning)
     help="How many times experiment should run to calculate metrics",
 )
 def cli(
-    data: str,
     show_plots: bool,
     experiment: str,
     iterations: int,
@@ -53,23 +43,25 @@ def cli(
     transform = torchvision.transforms.Compose([
         torchvision.transforms.ToTensor(),
     ])
-    dataset = None
-    match data:
-        case "MNIST":
-            dataset = torchvision.datasets.MNIST(root="datasets", train=True, download=True, transform=transform)
-        case "CIFAR10":
-            dataset = torchvision.datasets.CIFAR10(root="datasets", train=True, download=True, transform=transform)
-        case "CIFAR100":
-            dataset = torchvision.datasets.CIFAR100(root="datasets", train=True, download=True, transform=transform)
-    indices = torch.arange(10000)
-    dataset = Subset(dataset, indices)
+    datasets = {}
+    mnist = torchvision.datasets.MNIST(root="../datasets", train=False, download=True, transform=transform)
+    cifar10 = torchvision.datasets.CIFAR10(root="../datasets", train=False, download=True, transform=transform)
+    cifar100 = torchvision.datasets.CIFAR100(root="../datasets", train=False, download=True, transform=transform)
+    datasets["Mnist"] = mnist
+    datasets["Cifar10"] = cifar10
+    datasets["Cifar100"] = cifar100
     match experiment:
         case "reduction":
-            reduction_experiment(dataset, show_plots, iterations)
+            reduction_experiment(datasets, show_plots, iterations)
         case "splitting":
-            splitting_experiment(dataset, show_plots, iterations)
+            splitting_experiment(datasets, show_plots, iterations)
         case "quantity":
-            quantity_experiment(dataset, show_plots, iterations)
+            quantity_experiment(datasets, show_plots, iterations)
+            # labels_for_param = {"mnist": {1: [[1,1,1,1], [1,1,0,0]], 2: [[1,0,0,1], [1,1,0,0]], 3:[[1,1,1,1], [1,1,1,1]]},
+            #                     "cifar10": {1: [[1,1,0,0], [0,0,0,0]], 2: [[1,1,0,1], [0,1,0,0]], 3:[[1,1,1,1], [1,1,1,1]]},
+            #                     "cifar100": {1: [[1,1,0,0], [0,0,0,0]], 2: [[1,1,0,1], [0,1,0,0]], 3:[[1,1,1,1], [1,1,1,1]]}}
+            # true_labels = [1,1,1,1]
+            # _calculate_metrics(labels_for_param, true_labels, True, "quantity")
 
 
 if __name__ == "__main__":

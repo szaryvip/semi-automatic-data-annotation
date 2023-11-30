@@ -58,7 +58,7 @@ class SADATool:
         for sample, _ in self.data_loader:
             sample.to(self.device)
             with torch.no_grad():
-                encoded_img  = self.model.encoder(sample)
+                encoded_img  = self.model.encoder.encode(sample)
             encoded_img = encoded_img.flatten().cpu().numpy()
             encoded_sample = {f"Enc. Var. {i}": enc for i, enc in enumerate(encoded_img)}
             encoded_samples.append(encoded_sample)

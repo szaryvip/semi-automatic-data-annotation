@@ -4,7 +4,7 @@ import axios from 'axios';
 const FileDownload = () => {
     const handleDownload = async () => {
         try {
-            const response = await axios.get('/download_files', { responseType: 'blob' });
+            const response = await axios.get('/download-files', { responseType: 'blob' });
 
             const downloadUrl = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
