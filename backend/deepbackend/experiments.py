@@ -149,27 +149,37 @@ def reduction_experiment(datasets: datasets.VisionDataset, show_plot: bool, iter
                 else:
                     tsne_results = encoded_samples
 
-                ms = DBSCAN(eps=3, min_samples=20).fit(tsne_results)
-                labels = ms.labels_
-                labels_unique = np.unique(labels)
-                print("Number of clusters: ",len(labels_unique))
+                # ms = DBSCAN(eps=3, min_samples=20).fit(tsne_results)
+                # labels = ms.labels_
+                # labels_unique = np.unique(labels)
+                # print("Number of clusters: ",len(labels_unique))
                 
-                label_indices = {}
-                for idx, label in enumerate(labels):
-                    if label not in label_indices.keys():
-                        label_indices[label] = [idx]
-                    else:
-                        label_indices[label].append(idx)
+                # label_indices = {}
+                # for idx, label in enumerate(labels):
+                #     if label not in label_indices.keys():
+                #         label_indices[label] = [idx]
+                #     else:
+                #         label_indices[label].append(idx)
                     
-                annotated_quantity = 0.05*len(true_labels)
-                num_samples_per_label = int(annotated_quantity//len(labels_unique))
+                # annotated_quantity = 0.20*len(true_labels)
+                # num_samples_per_label = int(annotated_quantity//len(labels_unique))
 
-                selected_indices = _select_indices(label_indices, num_samples_per_label)
+                # selected_indices = _select_indices(label_indices, num_samples_per_label)
                 
+                # labels = []
+                # for idx, label in enumerate(true_labels):
+                #     if idx in selected_indices:
+                #         labels.append(label)
+                #     else:
+                #         labels.append(-1)
+                
+                annotated_percent = 0.20
+                labeled_quantity = int(annotated_percent * len(dataset))
+                random_indices = random.sample(range(len(true_labels)), labeled_quantity)
                 labels = []
-                for idx, label in enumerate(true_labels):
-                    if idx in selected_indices:
-                        labels.append(label)
+                for index, true_label in enumerate(true_labels):
+                    if index in random_indices:
+                        labels.append(true_label)
                     else:
                         labels.append(-1)
                 
@@ -206,7 +216,7 @@ def splitting_experiment(datasets: datasets.VisionDataset, show_plot: bool, iter
             for idx, label in enumerate(labels):
                 label_indices[label].append(idx)
                 
-            annotated_quantity = (5/100)*len(true_labels)
+            annotated_quantity = (20/100)*len(true_labels)
             num_samples_per_label = int(annotated_quantity//len(labels_unique))
 
             selected_indices = _select_indices(label_indices, num_samples_per_label)
@@ -235,7 +245,7 @@ def splitting_experiment(datasets: datasets.VisionDataset, show_plot: bool, iter
         encoded_samples = []
         true_labels = []
 
-        annotated_percent = 0.05
+        annotated_percent = 0.20
         labeled_quantity = int(annotated_percent * len(dataset))
 
         encoded_samples, true_labels = _process_through_vae(dataset)
@@ -280,24 +290,31 @@ def quantity_experiment(datasets: Dict[str, datasets.VisionDataset], show_plot: 
                 tsne = TSNE(n_components=2, perplexity=50)
                 tsne_results = tsne.fit_transform(encoded_samples)
                 
-                ms = DBSCAN(eps=3, min_samples=20).fit(tsne_results)
-                labels = ms.labels_
-                labels_unique = np.unique(labels)
-                print("Number of clusters: ",len(labels_unique))
+                # ms = DBSCAN(eps=3, min_samples=20).fit(tsne_results)
+                # labels = ms.labels_
+                # labels_unique = np.unique(labels)
+                # print("Number of clusters: ",len(labels_unique))
                 
-                label_indices = defaultdict(list)
-                for idx, label in enumerate(labels):
-                    label_indices[label].append(idx)
+                # label_indices = defaultdict(list)
+                # for idx, label in enumerate(labels):
+                #     label_indices[label].append(idx)
                 
-                annotated_quantity = (param_value/100)*len(true_labels)
-                num_samples_per_label = int(annotated_quantity//len(labels_unique))
+                annotated_quantity = int((param_value/100)*len(true_labels))
+                # num_samples_per_label = int(annotated_quantity//len(labels_unique))
 
-                selected_indices = _select_indices(label_indices, num_samples_per_label)
+                # selected_indices = _select_indices(label_indices, num_samples_per_label)
                 
+                # labels = []
+                # for idx, label in enumerate(true_labels):
+                #     if idx in selected_indices:
+                #         labels.append(label)
+                #     else:
+                #         labels.append(-1)
+                random_indices = random.sample(range(len(true_labels)), annotated_quantity)
                 labels = []
-                for idx, label in enumerate(true_labels):
-                    if idx in selected_indices:
-                        labels.append(label)
+                for index, true_label in enumerate(true_labels):
+                    if index in random_indices:
+                        labels.append(true_label)
                     else:
                         labels.append(-1)
                 
